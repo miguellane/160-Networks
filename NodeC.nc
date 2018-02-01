@@ -14,20 +14,45 @@
 configuration NodeC{
 }
 implementation {
+//External
     components MainC;
     components Node;
-    components new AMReceiverC(AM_PACK) as GeneralReceive;
-
     Node -> MainC.Boot;
 
-    Node.Receive -> GeneralReceive;
+//Internal
+    components new SimpleSendC(AM_PACK);
+    Node.Sender -> SimpleSendC; 
+
+    components new AMReceiverC(AM_PACK);
+    Node.Receive -> AMReceiverC;
 
     components ActiveMessageC;
     Node.AMControl -> ActiveMessageC;
-
-    components new SimpleSendC(AM_PACK);
-    Node.Sender -> SimpleSendC;
-
+    
     components CommandHandlerC;
     Node.CommandHandler -> CommandHandlerC;
+
+    components new TimerMilliC() as beaconTimer;
+    Node.beaconTimer -> beaconTimer;
+    components new TimerMilliC() as clientTimer;
+    Node.clientTimer -> clientTimer;
+    components new TimerMilliC() as serverTimer;
+    Node.serverTimer -> serverTimer;
+
+
+    components new HashmapC(uint8_t*, MAX_NUM_OF_SOCKETS) as userHashC;
+    Node.userClients -> userHashC;
+    //Custom
+    //components FloodingC;
+    //Node.Sender -> FloodingC.FloodSend;
+    //Node.Receive -> FloodingC.FloodReceive;
+
+    components NeighborDiscoveryC;
+    Node.Discover -> NeighborDiscoveryC;
+
+    components LinkStateC;
+    Node.LinkState -> LinkStateC;
+
+    components TransportC;
+    Node.Transport -> TransportC;
 }

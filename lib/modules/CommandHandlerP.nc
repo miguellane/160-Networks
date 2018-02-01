@@ -70,12 +70,32 @@ implementation{
 
             case CMD_TEST_CLIENT:
                 dbg(COMMAND_CHANNEL, "Command Type: Client\n");
-                signal CommandHandler.setTestClient();
+                signal CommandHandler.setTestClient(buff[0], buff[1], buff[2], buff[3]);
                 break;
 
             case CMD_TEST_SERVER:
+                dbg(COMMAND_CHANNEL, "Command Type: Server\n");
+                signal CommandHandler.setTestServer(buff[0]);
+                break;
+
+            case CMD_CLOSE_CLIENT:
                 dbg(COMMAND_CHANNEL, "Command Type: Client\n");
-                signal CommandHandler.setTestServer();
+                signal CommandHandler.closeClient(buff[0], buff[1], buff[2]);
+                break;
+
+            case CMD_APP_CLIENT:
+                dbg(COMMAND_CHANNEL, "Command Type: Client\n");
+                signal CommandHandler.setAppClient(buff[0], buff[1], buff[2]);
+                break;
+
+            case CMD_APP_SERVER:
+                dbg(COMMAND_CHANNEL, "Command Type: Server\n");
+                signal CommandHandler.setAppServer(buff[0]);
+                break;
+
+            case CMD_MSG_CLIENT:
+                dbg(COMMAND_CHANNEL, "Command Type: Msg\n");
+                signal CommandHandler.sendMsgClient(&buff[1]);
                 break;
 
             default:

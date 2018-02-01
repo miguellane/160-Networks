@@ -1,0 +1,4 @@
+// Custom Interface
+interface Flooding{
+	;
+}

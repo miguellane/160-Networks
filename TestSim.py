@@ -12,6 +12,12 @@ class TestSim:
     CMD_PING = 0
     CMD_NEIGHBOR_DUMP = 1
     CMD_ROUTE_DUMP=3
+    CMD_TEST_CLIENT = 4
+    CMD_TEST_SERVER = 5
+    CMD_CLOSE_CLIENT = 6
+    CMD_APP_CLIENT=10
+    CMD_APP_SERVER=11
+    CMD_MSG_CLIENT=12
 
     # CHANNELS - see includes/channels.h
     COMMAND_CHANNEL="command";
@@ -26,6 +32,9 @@ class TestSim:
 
     # Project 3
     TRANSPORT_CHANNEL="transport";
+
+    # Project 4
+    APPLICATION_CHANNEL="application";
 
     # Personal Debuggin Channels for some of the additional models implemented.
     HASHMAP_CHANNEL="hashmap";
@@ -120,6 +129,24 @@ class TestSim:
     def routeDMP(self, destination):
         self.sendCMD(self.CMD_ROUTE_DUMP, destination, "routing command");
 
+    def testClient(self, src, srcPort, dest, destPort, transfer):
+        self.sendCMD(self.CMD_TEST_CLIENT, src, "{0}{1}{2}{3}".format(chr(srcPort),chr(dest),chr(destPort),chr(transfer)));
+
+    def testServer(self, src, port):
+        self.sendCMD(self.CMD_TEST_SERVER, src, "{0}{1}".format(chr(port),chr(port)));
+
+    def closeClient(self, src, srcPort, dest, destPort):
+        self.sendCMD(self.CMD_CLOSE_CLIENT, src, "{0}{1}{2}".format(chr(srcPort),chr(dest),chr(destPort)));
+
+    def appClient(self, src, srcPort, dest, destPort):
+        self.sendCMD(self.CMD_APP_CLIENT, src, "{0}{1}{2}".format(chr(srcPort),chr(dest),chr(destPort)));
+
+    def appServer(self, src, port):
+        self.sendCMD(self.CMD_APP_SERVER, src, "{0}{1}".format(chr(port),chr(port)));
+
+    def sendMsgClient(self, src, srcPort,  msg):
+        self.sendCMD(self.CMD_MSG_CLIENT, src, "{0}{1}".format(chr(srcPort),msg));
+
     def addChannel(self, channelName, out=sys.stdout):
         print 'Adding Channel', channelName;
         self.t.addChannel(channelName, out);
@@ -130,14 +157,43 @@ def main():
     s.loadTopo("long_line.topo");
     s.loadNoise("no_noise.txt");
     s.bootAll();
+    #s.runTime(5);
+    
     s.addChannel(s.COMMAND_CHANNEL);
     s.addChannel(s.GENERAL_CHANNEL);
+    #s.addChannel(s.FLOODING_CHANNEL);
+    #s.addChannel(s.NEIGHBOR_CHANNEL);
+    #s.addChannel(s.ROUTING_CHANNEL);
+    #s.addChannel(s.TRANSPORT_CHANNEL);
+    s.addChannel(s.APPLICATION_CHANNEL);
 
-    s.runTime(20);
-    s.ping(1, 2, "Hello, World");
+    s.runTime(150);    
+    
+    #s.routeDMP(19);
+    #s.runTime(10);
+    #s.testServer(1, 41);
+    #s.runTime(10);
+    #s.testClient(4, 40, 1, 41, 100);
+    #s.runTime(2500);
+    #s.closeClient(4, 40, 1, 41)
+
+    s.appServer(1, 41);
     s.runTime(10);
-    s.ping(1, 3, "Hi!");
-    s.runTime(20);
+    s.appClient(4, 40, 1, 41);
+    s.runTime(10);
+    s.appClient(7, 70, 1, 41);
+    s.runTime(10);
+    s.sendMsgClient(4, 40, "hello mlane6 40\r\n");
+    #s.runTime(1000);
+    #s.sendMsgClient(4, 40, "msg No.\r\n");
+    #s.runTime(1000);
+    #s.sendMsgClient(4, 40, "whisper jsingh Yes\r\n");
+    #s.runTime(1000);
+    #s.sendMsgClient(4, 40, "listusr\r\n");
+
+    s.runTime(2500);
+
+    s.runTime(150);
 
 if __name__ == '__main__':
     main()

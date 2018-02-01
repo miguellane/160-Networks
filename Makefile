@@ -1,5 +1,5 @@
 COMPONENT=NodeC
-
+TINYOS_ROOT_DIR?=../tinyos-main/
 
 INCLUDE=-IdataStructures
 INCLUDE+=-IdataStructures/interfaces/ -IdataStructures/modules
